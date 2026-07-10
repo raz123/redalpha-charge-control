@@ -4,8 +4,8 @@
 <style>:root{color-scheme:dark}body{font:16px system-ui;margin:24px;background:#111;color:#eee}main{max-width:520px;margin:auto}label{display:block;margin:20px 0 8px}input,button{font:inherit;padding:12px;border-radius:10px;border:1px solid #555}input{width:100%;box-sizing:border-box;background:#222;color:#fff}button{margin-top:18px;background:#9be15d;color:#111;border:0;font-weight:700}.status{margin-top:20px;padding:12px;background:#222;border-radius:10px;white-space:pre-wrap}</style>
 <main><h1>RedAlpha Charge Control</h1><small>0 disables the limit.</small><label for="limit">Charge limit (%)</label><input id="limit" type="number" min="0" max="100" step="1" inputmode="numeric"><button id="save">Apply</button><div class="status" id="status">Reading…</div></main>
 <script type="module">
-import {exec} from 'kernelsu';
+import {exec} from './kernelsu.js';
 const path='/sys/class/power_supply/battery/charge_control_limit', limit=document.querySelector('#limit'), status=document.querySelector('#status');
-async function read(){const r=await exec(`cat ${path} 2>/dev/null; cat ${path}_max 2>/dev/null`);const v=r.stdout.trim().split(/\s+/);limit.value=v[0]||0;status.textContent=`Current: ${v[0]||'unavailable'}%\nMaximum: ${v[1]||'unknown'}%`;}
+async function read(){try{const r=await exec(`cat ${path} 2>/dev/null; cat ${path}_max 2>/dev/null`);if(r.errno){throw Error(r.stderr||'exec failed');}const v=r.stdout.trim().split(/\s+/);limit.value=v[0]||0;status.textContent=`Current: ${v[0]||'unavailable'}%\nMaximum: ${v[1]||'unknown'}%`;}catch(e){status.textContent=`Unable to read kernel interface.\n${e.message||e}`;}}
 document.querySelector('#save').onclick=async()=>{const v=Number(limit.value);if(!Number.isInteger(v)||v<0||v>100){status.textContent='Enter an integer from 0 to 100.';return;}const r=await exec(`mkdir -p /data/adb/redalpha-charge-control && printf '%s' '${v}' > /data/adb/redalpha-charge-control/limit && printf '%s' '${v}' > ${path}`);status.textContent=r.errno?'Apply failed. Check the kernel interface.':`Applied ${v}%.`;await read();};read();
 </script>

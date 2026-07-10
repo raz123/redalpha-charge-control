@@ -12,6 +12,7 @@ jobs:
         run: |
           test -f module.prop
           test -f webroot/index.html
+          test -f webroot/kernelsu.js
           sh -n service.sh
           grep -q "charge_control_limit" webroot/index.html
       - name: Package
