@@ -1,0 +1,22 @@
+name: Build module
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate
+        run: |
+          test -f module.prop
+          test -f webroot/index.html
+          sh -n service.sh
+          grep -q "charge_control_limit" webroot/index.html
+      - name: Package
+        run: zip -r "redalpha-charge-control-${GITHUB_REF_NAME#v}.zip" module.prop service.sh webroot README.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: redalpha-charge-control
+          path: redalpha-charge-control-*.zip

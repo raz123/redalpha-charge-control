@@ -1,0 +1,6 @@
+id=redalpha_charge_control
+name=RedAlpha Charge Control
+version=0.1.0
+versionCode=1
+author=RedAlpha
+description=Configure the RedAlpha kernel battery charge limit from KernelSU or ReSukiSU Manager.
