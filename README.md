@@ -1,6 +1,6 @@
 # RedAlpha Charge Control
 
-![RedAlpha Charge Control WebUI](screenshot.png)
+<img src="screenshot.png" width="270" alt="RedAlpha Charge Control WebUI">
 
 KernelSU/ReSukiSU Manager module for the RedAlpha Poco F3 (`alioth`) kernel.
 It provides a small WebUI for configuring the kernel's dedicated
